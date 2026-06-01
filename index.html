@@ -1,0 +1,254 @@
+
+<style>
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin: 0 0 10px;
+  }
+  .flow-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 24px;
+  }
+  .flow-node {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 16px;
+    min-width: 110px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .flow-node:hover { background: var(--color-background-primary); border-color: var(--color-border-secondary); }
+  .flow-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .flow-sub { font-size: 11px; color: var(--color-text-tertiary); }
+  .flow-arrow { font-size: 18px; color: var(--color-text-tertiary); flex-shrink: 0; }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 14px 16px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .badge-blue { background: var(--color-background-info); color: var(--color-text-info); }
+  .badge-amber { background: #FAEEDA; color: #633806; }
+  .badge-teal { background: #E1F5EE; color: #085041; }
+  .badge-purple { background: #EEEDFE; color: #26215C; }
+  .badge-red { background: #FCEBEB; color: #501313; }
+  .badge-green { background: #EAF3DE; color: #173404; }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .card-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.65; }
+  .card-body b { font-weight: 500; color: var(--color-text-primary); }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 16px 0; }
+  .latency-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .latency-table th { color: var(--color-text-tertiary); font-weight: 500; text-align: left; padding: 4px 8px 8px 0; font-size: 11px; }
+  .latency-table td { padding: 5px 8px 5px 0; color: var(--color-text-secondary); border-top: 0.5px solid var(--color-border-tertiary); }
+  .latency-table td:last-child { color: var(--color-text-primary); font-weight: 500; }
+  .bar { height: 6px; border-radius: 4px; margin-top: 4px; }
+  .tip-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .tip-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .tip-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+</style>
+
+<div style="padding: 20px 0 4px;">
+
+  <!-- 전체 흐름 -->
+  <p class="section-title">전체 흐름</p>
+  <div class="flow-wrap">
+    <div class="flow-node" onclick="sendPrompt('IP 카메라의 RTSP 스트림 설정 방법을 자세히 알려줘')">
+      <i class="ti ti-camera" style="font-size:20px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+      <span class="flow-label">IP Camera</span>
+      <span class="flow-sub">수중 카메라 ×N</span>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">
+      <span style="font-size:11px;background:var(--color-background-info);color:var(--color-text-info);padding:2px 8px;border-radius:20px;font-weight:500;">RTSP</span>
+      <span class="flow-label">전송</span>
+      <span class="flow-sub">포트 554</span>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node" onclick="sendPrompt('MediaMTX 설정 파일 예시를 보여줘')">
+      <i class="ti ti-server" style="font-size:20px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+      <span class="flow-label">MediaMTX</span>
+      <span class="flow-sub">스트리밍 서버</span>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">
+      <span style="font-size:11px;background:#EAF3DE;color:#173404;padding:2px 8px;border-radius:20px;font-weight:500;">HLS 변환</span>
+      <span class="flow-label">변환</span>
+      <span class="flow-sub">m3u8 + .ts</span>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node" onclick="sendPrompt('웹 브라우저에서 HLS 영상을 재생하는 코드 예시 보여줘')">
+      <i class="ti ti-browser" style="font-size:20px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+      <span class="flow-label">웹 브라우저</span>
+      <span class="flow-sub">학부모 시청</span>
+    </div>
+  </div>
+
+  <!-- 핵심 개념 카드 -->
+  <p class="section-title">핵심 개념</p>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge badge-blue">프로토콜</span>
+        <span class="card-title">RTSP</span>
+      </div>
+      <div class="card-body">
+        카메라 영상을 외부로 내보내는 프로토콜. 정확히는 영상 데이터는 <b>RTP</b>로 흐르고, RTSP는 세션을 <b>제어</b>(재생·정지)하는 역할.<br><br>
+        서버가 카메라에서 영상을 <b>pull</b>하는 방식이 일반적. 기본 포트 <b>554</b>.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge badge-teal">변환</span>
+        <span class="card-title">HLS</span>
+      </div>
+      <div class="card-body">
+        HTTP Live Streaming. 브라우저가 RTSP를 이해 못하므로 변환 필요.<br><br>
+        · <b>.m3u8</b> — 플레이리스트(인덱스)<br>
+        · <b>.ts</b> — 2~6초짜리 영상 조각<br>
+        · m3u8이 실시간 갱신되어 새 ts를 가리킴 → 이게 "실시간"처럼 보이는 원리
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge badge-purple">서버</span>
+        <span class="card-title">MediaMTX</span>
+      </div>
+      <div class="card-body">
+        RTSP → HLS 외에도 <b>RTMP, WebRTC, SRT</b> 등 다양한 프로토콜을 지원하는 올인원 미디어 서버.<br><br>
+        <b>mediamtx.yml</b> 설정 파일 하나로 카메라 등록 + 변환 설정 가능. 테스트용으로 최적.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge badge-amber">코덱</span>
+        <span class="card-title">H.264 vs H.265</span>
+      </div>
+      <div class="card-body">
+        · <b>H.264</b> — 브라우저 지원 완벽, 변환 불필요. 권장.<br>
+        · <b>H.265(HEVC)</b> — 압축률 높지만 브라우저 지원 불안정 → 변환 필요.<br><br>
+        카메라 구매 시 H.264 지원 여부 반드시 확인.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 지연 비교 -->
+  <hr class="divider">
+  <p class="section-title">지연(Latency) 비교 — 방식 선택 기준</p>
+  <table class="latency-table">
+    <tr>
+      <th>방식</th>
+      <th>지연</th>
+      <th>브라우저 지원</th>
+      <th>추천 용도</th>
+    </tr>
+    <tr>
+      <td>HLS</td>
+      <td>
+        <div>10~30초</div>
+        <div class="bar" style="background:#F09595;width:100%"></div>
+      </td>
+      <td>✓ 완벽</td>
+      <td>학부모 VOD식 시청</td>
+    </tr>
+    <tr>
+      <td>LL-HLS</td>
+      <td>
+        <div>2~5초</div>
+        <div class="bar" style="background:#FAC775;width:60%"></div>
+      </td>
+      <td>✓ 대부분</td>
+      <td>준실시간 모니터링</td>
+    </tr>
+    <tr>
+      <td>WebRTC</td>
+      <td>
+        <div>0.1~1초</div>
+        <div class="bar" style="background:#9FE1CB;width:20%"></div>
+      </td>
+      <td>✓ 완벽</td>
+      <td>안전 모니터링 필수 시</td>
+    </tr>
+  </table>
+
+  <!-- 추가로 알아야 할 것 -->
+  <hr class="divider">
+  <p class="section-title">신입으로서 추가로 챙겨야 할 것</p>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge badge-red">보안</span>
+        <span class="card-title">인증 / 접근 제어</span>
+      </div>
+      <div class="card-body">
+        HLS URL을 그대로 노출하면 누구나 볼 수 있음.<br><br>
+        · <b>로그인 후 토큰</b> 발급 → URL에 포함<br>
+        · 또는 <b>Nginx 리버스 프록시</b>로 인증 처리
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge badge-blue">네트워크</span>
+        <span class="card-title">내부망 → 외부 노출</span>
+      </div>
+      <div class="card-body">
+        수중 카메라는 보통 <b>유선 PoE</b> 연결 (전원+데이터 한 케이블).<br><br>
+        내부망에 있는 서버를 외부에서 보려면<br>
+        · <b>포트포워딩</b> 또는<br>
+        · <b>Nginx 리버스 프록시</b> 설정 필요
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge badge-green">스케일링</span>
+        <span class="card-title">카메라 많아지면</span>
+      </div>
+      <div class="card-body">
+        MediaMTX는 단독으로 부하 한계 있음.<br><br>
+        상용 환경에서는<br>
+        · <b>Wowza</b>, <b>Ant Media Server</b><br>
+        · <b>AWS Elemental</b> 같은 솔루션 사용
+      </div>
+    </div>
+
+  </div>
+
+</div>
