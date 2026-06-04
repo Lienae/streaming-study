@@ -196,9 +196,10 @@
             <div class="flow-arrow">→</div>
 
             <div class="flow-card">
-                <span class="badge blue">RTSP</span><br>
-                <b>전송</b><br>
-                포트 554
+                <span class="badge blue">RTSP + RTP</span><br>
+                <b>제어 + 영상전송</b><br>
+                RTSP(제어)<br>
+                RTP(실제 영상)
             </div>
 
             <div class="flow-arrow">→</div>
@@ -206,7 +207,7 @@
             <div class="flow-card">
                 🖥️<br><br>
                 <b>MediaMTX</b><br>
-                스트리밍 서버
+                HLS / WebRTC 변환
             </div>
 
             <div class="flow-arrow">→</div>
@@ -234,47 +235,169 @@
             <div class="card">
                 <span class="badge blue">프로토콜</span>
                 <h3>RTSP</h3>
-                카메라 영상을 외부로 내보내는 프로토콜.<br>
-                실제 영상은 RTP가 전송하고 RTSP는 제어 역할을 담당한다.<br><br>
+
+                스트리밍 세션을 제어하는 프로토콜.<br><br>
+
+                주요 명령
+
+                <ul style="padding-left:20px">
+                    <li>SETUP</li>
+                    <li>PLAY</li>
+                    <li>PAUSE</li>
+                    <li>TEARDOWN</li>
+                </ul>
+
+                <br>
+
+                실제 영상 데이터는 RTP가 전송한다.<br>
                 기본 포트 : <b>554</b>
+            </div>
+
+            <div class="card">
+                <span class="badge red">전송</span>
+                <h3>RTP</h3>
+
+                실제 영상/음성 데이터를 전송하는 프로토콜.<br><br>
+
+                RTSP가 연결을 제어하고
+                RTP가 영상 데이터를 전달한다.<br><br>
+
+                대부분 UDP 기반으로 동작한다.
+
+                <br><br>
+
+                예시
+
+                <div style="margin-top:10px; padding:12px; background:#f8fafc; border-radius:8px;">
+
+                    <b>RTSP</b> → PLAY 요청<br>
+                    <b>RTP</b> → 실제 영상 전송
+
+                </div>
+            </div>
+
+            <div class="card">
+                <span class="badge purple">설명 정보</span>
+                <h3>SDP</h3>
+
+                영상 스트림의 정보를 설명하는 데이터.
+
+                <br><br>
+
+                포함 정보
+
+                <ul style="padding-left:20px">
+                    <li>코덱(H264)</li>
+                    <li>해상도</li>
+                    <li>FPS</li>
+                    <li>오디오 정보</li>
+                </ul>
+
+                <br>
+
+                RTSP 연결 시 먼저 전달된다.
             </div>
 
             <div class="card">
                 <span class="badge green">변환</span>
                 <h3>HLS</h3>
-                브라우저는 RTSP를 직접 재생하지 못한다.<br><br>
 
-                • .m3u8 : 플레이리스트<br>
-                • .ts : 영상 조각 파일<br><br>
+                브라우저는 RTSP를 직접 재생할 수 없다.
 
-                m3u8이 지속적으로 갱신되며 실시간 스트리밍처럼 동작한다.
+                <br><br>
+
+                HLS는 영상을 작은 조각으로 분할하여 전송한다.
+
+                <ul style="padding-left:20px">
+                    <li>.m3u8 : 플레이리스트</li>
+                    <li>.ts : 영상 조각 파일</li>
+                </ul>
+
+                <br>
+
+                브라우저는 m3u8을 읽고
+                ts 파일을 순서대로 다운로드하며 재생한다.
+
+                <br><br>
+
+                장점 : 대규모 동시 접속에 유리<br>
+                단점 : 지연시간 발생
             </div>
 
             <div class="card">
                 <span class="badge purple">서버</span>
                 <h3>MediaMTX</h3>
 
-                RTSP → HLS 변환 가능<br>
+                RTSP 스트림을 받아 다양한 프로토콜로 재전송하는 스트리밍 서버.
+
+                <br><br>
 
                 지원 프로토콜
 
                 <ul style="padding-left:20px">
-                    <li>RTMP</li>
+                    <li>HLS</li>
                     <li>WebRTC</li>
+                    <li>RTMP</li>
                     <li>SRT</li>
                 </ul>
 
+                <br>
+
+                카메라와 브라우저 사이의 중계 역할 수행
+            </div>
+
+            <div class="card">
+                <span class="badge green">실시간</span>
+                <h3>WebRTC</h3>
+
+                초저지연 실시간 스트리밍 기술.
+
+                <br><br>
+
+                브라우저가 MediaMTX와 직접 연결하여
+                영상을 수신한다.
+
+                <br><br>
+
+                지연시간
+
+                <b>0.1 ~ 1초</b>
+
+                <br><br>
+
+                장점
+                <ul style="padding-left:20px">
+                    <li>거의 실시간</li>
+                    <li>안전 모니터링 적합</li>
+                </ul>
+
+                단점
+                <ul style="padding-left:20px">
+                    <li>동시 접속 증가 시 서버 부담</li>
+                </ul>
             </div>
 
             <div class="card">
                 <span class="badge orange">코덱</span>
                 <h3>H.264 vs H.265</h3>
 
-                <b>H.264</b><br>
-                브라우저 호환성 우수<br><br>
+                코덱 = 영상을 압축하는 방식
 
-                <b>H.265</b><br>
-                압축률은 높지만 브라우저 지원이 제한적
+                <br><br>
+
+                <b>H.264</b>
+                <ul style="padding-left:20px">
+                    <li>브라우저 호환성 우수</li>
+                    <li>WebRTC 지원</li>
+                    <li>가장 많이 사용</li>
+                </ul>
+
+                <b>H.265</b>
+                <ul style="padding-left:20px">
+                    <li>압축 효율 우수</li>
+                    <li>대역폭 절약</li>
+                    <li>브라우저 지원 제한</li>
+                </ul>
             </div>
 
         </div>
@@ -315,10 +438,95 @@
                     0.1~1초
                     <div class="bar b3"></div>
                 </td>
-                <td>실시간 안전 모니터링</td>
+                <td>실시간 모니터링</td>
             </tr>
 
         </table>
+
+        <hr>
+
+        
+        <hr>
+
+        <p class="section-title">TCP vs UDP</p>
+
+        <div class="cards">
+
+            <div class="card">
+                <span class="badge blue">TCP</span>
+                <h3>신뢰성 우선</h3>
+
+                데이터 유실 없이 전달
+
+                <br><br>
+
+                <ul style="padding-left:20px">
+                    <li>재전송 가능</li>
+                    <li>신뢰성 높음</li>
+                    <li>상대적으로 느림</li>
+                </ul>
+
+                <br>
+
+                사용 예
+
+                <ul style="padding-left:20px">
+                    <li>웹 페이지</li>
+                    <li>파일 다운로드</li>
+                    <li>DB 통신</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <span class="badge orange">UDP</span>
+                <h3>속도 우선</h3>
+
+                빠르게 전달하며 일부 데이터 손실 가능
+
+                <br><br>
+
+                <ul style="padding-left:20px">
+                    <li>재전송 없음</li>
+                    <li>지연 최소화</li>
+                    <li>패킷 유실 가능</li>
+                </ul>
+
+                <br>
+
+                사용 예
+
+                <ul style="padding-left:20px">
+                    <li>RTP</li>
+                    <li>WebRTC</li>
+                    <li>실시간 스트리밍</li>
+                </ul>
+            </div>
+
+        </div>
+
+
+        <p class="section-title">실제 데이터 흐름</p>
+
+       <div class="card">
+
+            <b>1.</b> 브라우저 접속<br><br>
+
+            <b>2.</b> MediaMTX에 요청<br><br>
+
+            <b>3.</b> MediaMTX → 카메라 RTSP 연결<br><br>
+
+            <b>4.</b> 카메라 → SDP 전달<br><br>
+
+            <b>5.</b> 카메라 → RTP 영상 전송<br><br>
+
+            <b>6.</b> MediaMTX<br>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;├ HLS 변환<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;└ WebRTC 변환<br><br>
+
+            <b>7.</b> 브라우저 재생
+
+        </div>
 
         <hr>
 
