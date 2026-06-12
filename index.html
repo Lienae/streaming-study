@@ -159,6 +159,192 @@
             width: 20%;
         }
 
+        .architecture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 60px 0;
+        }
+
+        .arch-box {
+            min-width: 360px;
+            padding: 18px 24px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .arch-box h4 {
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        .arch-sub {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* 색상 */
+
+        .box-green {
+            background: #e9f7f2;
+            border-color: #8bcab0;
+        }
+
+        .box-green h4 {
+            color: #166534;
+        }
+
+        .box-green .arch-sub {
+            color: #0f766e;
+        }
+
+        .box-purple {
+            background: #f1efff;
+            border-color: #bdb5ff;
+        }
+
+        .box-purple h4 {
+            color: #4338ca;
+        }
+
+        .box-purple .arch-sub {
+            color: #6366f1;
+        }
+
+        .box-orange {
+            background: #fff4e2;
+            border-color: #e6c58f;
+        }
+
+        .box-orange h4 {
+            color: #92400e;
+        }
+
+        .box-orange .arch-sub {
+            color: #b45309;
+        }
+
+        .box-red {
+            background: #fff1eb;
+            border-color: #e4aa98;
+        }
+
+        .box-red h4 {
+            color: #9a3412;
+        }
+
+        .box-red .arch-sub {
+            color: #c2410c;
+        }
+
+        .box-gray {
+            background: #f4f2ee;
+            border-color: #d1cbc2;
+        }
+
+        .box-gray h4 {
+            color: #444;
+        }
+
+        /* 세로 연결선 */
+
+        .vertical-line {
+            width: 2px;
+            height: 55px;
+            background: #777;
+            position: relative;
+        }
+
+        .vertical-line::after {
+            content: "";
+            position: absolute;
+            left: -5px;
+            bottom: -1px;
+
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 10px solid #777;
+        }
+
+        .line-label {
+            position: absolute;
+            left: 18px;
+            top: 15px;
+            color: #666;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        /* 상단 영역 */
+
+        .top-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin: 30px 0;
+        }
+
+        .horizontal-link {
+            width: 120px;
+            height: 2px;
+            background: #777;
+            position: relative;
+        }
+
+        .horizontal-link::after {
+            content: "";
+            position: absolute;
+            right: -1px;
+            top: -5px;
+
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 10px solid #777;
+        }
+
+        .horizontal-link.reverse::after {
+            display: none;
+        }
+
+        .horizontal-link.reverse::before {
+            content: "";
+            position: absolute;
+            left: -1px;
+            top: -5px;
+
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: 10px solid #777;
+        }
+
+        .api-links {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            margin: 0 25px;
+        }
+
+        .link-label-top {
+            position: absolute;
+            top: -28px;
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .link-label-bottom {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
         @media(max-width:768px) {
 
             body {
@@ -445,7 +631,7 @@
 
         <hr>
 
-        
+
         <hr>
 
         <p class="section-title">TCP vs UDP</p>
@@ -505,9 +691,138 @@
         </div>
 
 
+        <hr>
+
+        <p class="section-title">
+            Cloudflare + FFmpeg 실제 구현 아키텍처
+        </p>
+
+        <div class="architecture">
+
+            <!-- 스마트폰 -->
+
+            <div class="arch-box box-green">
+                <h4>스마트폰 (IP Webcam)</h4>
+                <div class="arch-sub">
+                    rtsp://192.168.x.x:8080/...
+                </div>
+            </div>
+
+            <div class="vertical-line">
+                <div class="line-label">RTSP (TCP)</div>
+            </div>
+
+            <!-- 상단 -->
+
+            <div class="top-area">
+
+                <div class="arch-box box-gray">
+                    <h4>강사 웹 UI</h4>
+                </div>
+
+                <div class="horizontal-link">
+                    <div class="link-label-top">
+                        AJAX POST
+                    </div>
+                </div>
+
+                <div class="arch-box box-purple">
+                    <h4>Spring 컨트롤러</h4>
+
+                    <div class="arch-sub">
+                        POST /admin/pool-stream/start-ffmpeg
+                    </div>
+                </div>
+
+                <div class="api-links">
+
+                    <div class="horizontal-link">
+                        <div class="link-label-top">
+                            API 호출
+                        </div>
+                    </div>
+
+                    <div class="horizontal-link reverse">
+                        <div class="link-label-bottom">
+                            RTMP URL + Stream Key
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="arch-box box-orange">
+                    <h4>Cloudflare Stream API</h4>
+                </div>
+
+            </div>
+
+            <div class="vertical-line">
+                <div class="line-label">
+                    cameraUrl, rtmpUrl, streamKey
+                </div>
+            </div>
+
+            <div class="arch-box box-purple">
+                <h4>FFmpegStreamService</h4>
+
+                <div class="arch-sub">
+                    startStreaming(cameraUrl,
+                    rtmpUrl,
+                    streamKey)
+                </div>
+            </div>
+
+            <div class="vertical-line">
+                <div class="line-label">
+                    ProcessBuilder 실행
+                </div>
+            </div>
+
+            <div class="arch-box box-red">
+                <h4>FFmpeg 프로세스</h4>
+
+                <div class="arch-sub">
+                    -rtsp_transport tcp<br>
+                    -i [cameraUrl]<br>
+                    -c:v copy<br>
+                    -c:a aac<br>
+                    -f flv [publishUrl]
+                </div>
+            </div>
+
+            <div class="vertical-line">
+                <div class="line-label">
+                    RTMPS (FLV)
+                </div>
+            </div>
+
+            <div class="arch-box box-orange">
+                <h4>Cloudflare Stream</h4>
+
+                <div class="arch-sub">
+                    RTMPS 수신 → HLS 변환
+                </div>
+            </div>
+
+            <div class="vertical-line">
+                <div class="line-label">
+                    HLS (m3u8)
+                </div>
+            </div>
+
+            <div class="arch-box box-green">
+                <h4>학부모 웹 플레이어</h4>
+
+                <div class="arch-sub">
+                    HLS.js / Video.js
+                </div>
+            </div>
+
+        </div>
+
         <p class="section-title">실제 데이터 흐름</p>
 
-       <div class="card">
+        <div class="card">
 
             <b>1.</b> 브라우저 접속<br><br>
 
