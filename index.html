@@ -766,9 +766,9 @@
                 <h4>FFmpegStreamService</h4>
 
                 <div class="arch-sub">
-                    startStreaming(cameraUrl,
-                    rtmpUrl,
-                    streamKey)
+                    Cloudflare Stream 생성<br>
+                    RTMP URL 발급<br>
+                    FFmpeg Process 실행
                 </div>
             </div>
 
@@ -824,22 +824,122 @@
 
         <div class="card">
 
-            <b>1.</b> 브라우저 접속<br><br>
+            <b>1.</b> 강사가 방송 시작 버튼 클릭<br><br>
 
-            <b>2.</b> MediaMTX에 요청<br><br>
+            <b>2.</b> Spring 서버가 Cloudflare Stream API 호출<br><br>
 
-            <b>3.</b> MediaMTX → 카메라 RTSP 연결<br><br>
+            <b>3.</b> Cloudflare가 RTMP URL 및 Stream Key 발급<br><br>
 
-            <b>4.</b> 카메라 → SDP 전달<br><br>
+            <b>4.</b> Spring이 FFmpeg 프로세스 실행<br><br>
 
-            <b>5.</b> 카메라 → RTP 영상 전송<br><br>
+            <b>5.</b> FFmpeg가 IP Camera RTSP 스트림 수신<br><br>
 
-            <b>6.</b> MediaMTX<br>
+            <b>6.</b> FFmpeg가 Cloudflare로 RTMPS 송출<br><br>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;├ HLS 변환<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;└ WebRTC 변환<br><br>
+            <b>7.</b> Cloudflare Stream이 HLS로 자동 변환<br><br>
 
-            <b>7.</b> 브라우저 재생
+            <b>8.</b> 학부모 플레이어가 HLS 재생<br><br>
+
+            <b>9.</b> Cloudflare Webhook 이벤트 발생<br>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;├ live_input.connected<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├ live_input.errored<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;└ live_input.disconnected<br><br>
+
+            <b>10.</b> Spring 서버가 상태 변경 처리
+
+        </div>
+
+        <hr>
+
+        <p class="section-title">
+            Cloudflare Webhook 이벤트 처리
+        </p>        
+
+        <div class="cards">
+
+            <div class="card">
+
+                <h3>Webhook 처리 흐름</h3>
+
+                <div style="text-align:center; line-height:2;">
+
+                    Cloudflare Stream<br>
+                    ↓<br>
+                    live_input.connected<br>
+                    ↓<br>
+                    Webhook<br>
+                    ↓<br>
+                    Spring Server<br>
+                    ↓<br>
+                    <b>Pool Status = LIVE</b>
+
+                    <br><br>
+
+                    Cloudflare Stream<br>
+                    ↓<br>
+                    live_input.disconnected<br>
+                    ↓<br>
+                    Webhook<br>
+                    ↓<br>
+                    Spring Server<br>
+                    ↓<br>
+                    <b>Pool Status = OFFLINE</b>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+                <span class="badge green">CONNECTED</span>
+                <h3>live_input.connected</h3>
+
+                RTMP 송출 시작 시 발생
+
+                <br><br>
+
+                처리
+
+                <ul style="padding-left:20px">
+                    <li>Pool 상태 LIVE 변경</li>
+                    <li>방송 시작 기록</li>
+                    <li>시청 가능 상태 활성화</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <span class="badge red">ERRORED</span>
+                <h3>live_input.errored</h3>
+
+                송출 오류 발생 시
+
+                <br><br>
+
+                예시
+
+                <ul style="padding-left:20px">
+                    <li>ERR_GOP_OUT_OF_RANGE</li>
+                    <li>코덱 오류</li>
+                    <li>인코딩 오류</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <span class="badge orange">DISCONNECTED</span>
+                <h3>live_input.disconnected</h3>
+
+                방송 종료 시 발생
+
+                <br><br>
+
+                처리
+
+                <ul style="padding-left:20px">
+                    <li>Pool 상태 OFFLINE</li>
+                    <li>종료 시간 저장</li>
+                    <li>재생 중지</li>
+                </ul>
+            </div>
 
         </div>
 
